@@ -1,24 +1,26 @@
 classdef Bidder
-    %BIDDERS: Represents participants in the auction. 
-    %   Detailed explanation goes here
-    
-    properties (Access=private)
-        bidderId
-        strategy
-        expectedValue 
-        liabilities 
+    properties
+        bidderID double
+        budget double
+        currentBid double = 0 % psychological price point
+        maxBid double % 
+        strategy BiddingStrategy
     end
     
     methods
-        function obj = Bidder(bidderId, strategy, liabilities)
-            obj.bidderId = bidderId;
+        % Constructor method to create a new bidder
+        function obj = Bidder(bidderID, budget, maxBid, strategy)
+            obj.bidderID = bidderID;
+            obj.budget = budget;
+            obj.maxBid = maxBid;
             obj.strategy = strategy;
-            obj.liabilities = liabilities;
         end
         
-        function strategy = updateStrategy(strategy)
-            obj.stragtegy = strategy;
+        % Method to place a bid
+        function obj = placeBid(obj, currentHighestBid)
+            obj.currentBid = obj.strategy.generateBid(currentHighestBid, obj.maxBid, obj.budget);
         end
+        
+        % Additional methods as needed
     end
 end
-

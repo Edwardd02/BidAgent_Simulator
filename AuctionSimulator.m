@@ -8,7 +8,6 @@ classdef AuctionSimulator
     methods
         function obj = AuctionSimulator()
             % Constructor for the AuctionSimulator class.
-            % This is where you might initialize your auctions, bidders, and products.
             obj.auctions = []; % Initialize empty arrays
             obj.bidders = [];
             obj.products = [];
