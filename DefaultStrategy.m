@@ -1,11 +1,14 @@
 classdef DefaultStrategy < BiddingStrategy
     properties
-        IncrementFactor double = 0.05; % Increase bid by 5%
+        incrementFactor double;
     end
     
     methods
+        function obj = DefaultStrategy(incrementFactor)
+            obj.incrementFactor = incrementFactor;
+        end
         function bid = generateBid(~, currentBid, maxBid, budget)
-            proposedBid = currentBid * (1 + obj.IncrementFactor);
+            proposedBid = currentBid * (1 + obj.incrementFactor);
             bid = min([proposedBid, maxBid, budget]);
         end
     end

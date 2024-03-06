@@ -4,7 +4,7 @@ classdef AuctionLot
         startingBid double
         currentBid double
         minIncrement double
-        leadingBidder Bidder 
+        leadingBidder double 
     end
     
     methods
@@ -15,29 +15,32 @@ classdef AuctionLot
             obj.currentBid = startingBid; 
             % Initial current bid is the starting bid
             obj.minIncrement = minIncrement;
-            obj.leadingBidder = Bidder(-1, 0, 0, nan); 
+            obj.leadingBidder = nan; 
             % Initialized with a dummy bidder
         end
         
         % Method to update the current bid
-        function obj = updateBid(obj, newBid, bidder)
-            if newBid > (obj.currentBid * (1 + obj.minIncrement))
-                error('New bid must be higher than the current bid.');
-            else
-                obj.currentBid = newBid;
-                obj.leadingBidder = bidder;
-            end
-        end
-        
-        % Method to check if there is a bid
-        function hasBid = hasCurrentBid(obj)
-            hasBid = ~isempty(obj.leadingBidder.Name); % Checks if there's a leading bidder
-        end
+        % function obj = updateBid(obj, newBid, bidder)
+        %     if newBid > (obj.currentBid * (1 + obj.minIncrement))
+        %         error('New bid must be higher than the current bid.');
+        %     else
+        %         obj.currentBid = newBid;
+        %         obj.leadingBidder = bidder;
+        %     end
+        % end
         
         function description = toString(obj)
             % This function now returns a string instead of modifying the object or directly displaying.
             description = ['Lot ID: ', num2str(obj.lotID), ', Starting Bid: ', num2str(obj.startingBid), ', Current Bid: ', num2str(obj.currentBid), ', Leading Bidder ID:', num2str(obj.leadingBidder.getID)];
             disp(description);  % If you want to print it directly as well
+        end
+
+        function currentBid = getCurrentBid(obj)
+            currentBid = obj.currentBid;
+        end
+
+        function leadingBidder = getLeadingBidder(obj)
+            leadingBidder = obj.leadingBidder;
         end
     end
 end

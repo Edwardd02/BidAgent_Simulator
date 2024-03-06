@@ -1,13 +1,15 @@
 classdef Bidder
     properties (Access = private)
         bidderID double
+        % Individual's budget for the current auction round
         budget double
+        % Individual's psychological valuation for the 
+        % auction item in the current bidding session
         currentBid double
-        % the individual's psychological valuation for the auction item in 
-        % the current bidding session
+        % Individual's maximum psychological bidding 
+        % threshold for the auction lot
         maxBid double 
-        % the individual's maximum psychological bidding threshold for the 
-        % auction lot
+        % Individual's current bidding strategy
         strategy
     end
     
@@ -21,9 +23,13 @@ classdef Bidder
         end
         
         % Method to place a bid
-        function obj = placeBid(obj, currentHighestBid)
-            obj.currentBid = obj.strategy.generateBid(currentHighestBid,...
-                obj.maxBid, obj.budget);
+        function obj = placeBid(obj, currentBid, ...
+                leadingBidderID)
+           % The currentLeadingBidder will usually wait for next round
+           if leadingBidderID ~= obj.bidderID 
+               obj.currentBid = obj.strategy.generateBid(currentBid,...
+                    obj.maxBid, obj.budget);
+           end
         end
         
         function description = toString(obj)
@@ -35,6 +41,7 @@ classdef Bidder
         function iD = getID(obj)
             iD = obj.bidderID;
         end
+
         % Additional methods as needed
     end
 end

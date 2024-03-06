@@ -1,34 +1,36 @@
 classdef AuctionSimulator
     properties (Access = private)
-        AuctionLots % Array of Product objects
-        Bidders % Array of Bidder objects
+        arrAuctionLots % Array of Product objects
+        arrBidders % Array of Bidder objects
         MaxRounds % Maximum number of bidding rounds
     end
     
     methods
         % Constructor method to initialize the simulation
-        function obj = AuctionSimulation(auctionLots, bidders, maxRounds)
-            obj.AuctionLots = auctionLots;
-            obj.Bidders = bidders;
+        function obj = AuctionSimulator(arrAuctionLots, arrBidders, maxRounds)
+            obj.arrAuctionLots = arrAuctionLots;
+            obj.arrBidders = arrBidders;
             obj.MaxRounds = maxRounds;
         end
         
         % Method to run the simulation
-        function run(obj)
-            for round = 1:obj.MaxRounds
-                disp(['Round ' num2str(round) ':']);
-                for i = 1:length(obj.Bidders)
-                    % Each bidder places a bid based on their strategy
-                    currentHighestBid = ... % Determine the current highest bid for the product being auctioned
-                    obj.Bidders(i).placeBid(currentHighestBid);
-                    % Update auction state based on the new bid
-                    % This may include updating the leading bid for the product,
-                    % notifying other bidders, etc.
+        function run(obj) 
+            for lot = 1:length(obj.arrAuctionLots) % loop through Lots
+                for round = 1:obj.MaxRounds % loop through rounds
+                    disp(['Round ' num2str(round) ':']); % Display round
+                    for i = 1:length(obj.arrBidders) % loop through bidders
+                        % placeBid(obj,
+                        % currentBid,leadingBidderID)
+                        currentBidderBid = placeBid(obj.arrBidders(i), ...
+                            obj.arrAuctionLots(lot).getCurrentBid,...
+                            obj.arrAuctionLots(lot).getLeadingBidder);
+                        if currentBidderBid > obj.arrAuctionLots(lot).getCurrentBid
+                            obj.arrAuctionLots(lot).getCurrentBid = currentBidderBid;
+                            obj.arrAuctionLots(lot).getLeadingBidder = obj.arrBidders(i).getID;
+                        end
+                    end
                 end
-                % Check auction conditions, update product status, etc.
-                % Display round results
             end
-            % Finalize auction results, determine winners, etc.
         end
     end
 end
