@@ -24,11 +24,11 @@ classdef Bidder
         
         % Method to place a bid
         function obj = placeBid(obj, currentBid, ...
-                leadingBidderID)
+                leadingBidder)
            % The currentLeadingBidder will usually wait for next round
-           if leadingBidderID ~= obj.bidderID 
-               obj.currentBid = obj.strategy.generateBid(currentBid,...
-                    obj.maxBid, obj.budget);
+           if leadingBidder ~= obj.bidderID 
+               obj.currentBid = obj.strategy.generateBid(...
+                   currentBid, obj.maxBid, obj.budget);
            end
         end
         
@@ -40,6 +40,18 @@ classdef Bidder
         
         function iD = getID(obj)
             iD = obj.bidderID;
+        end
+
+        function currentBid = getCurrentBid(obj)
+            currentBid = obj.currentBid;
+        end
+        
+        function obj = setID(ID)
+            obj.bidderID = ID;
+        end
+        
+        function obj = setCurrentBid(currentBid)
+            obj.currentBid = currentBid;
         end
 
         % Additional methods as needed

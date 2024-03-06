@@ -15,7 +15,7 @@ classdef AuctionLot
             obj.currentBid = startingBid; 
             % Initial current bid is the starting bid
             obj.minIncrement = minIncrement;
-            obj.leadingBidder = nan; 
+            obj.leadingBidder = -1; 
             % Initialized with a dummy bidder
         end
         
@@ -31,7 +31,10 @@ classdef AuctionLot
         
         function description = toString(obj)
             % This function now returns a string instead of modifying the object or directly displaying.
-            description = ['Lot ID: ', num2str(obj.lotID), ', Starting Bid: ', num2str(obj.startingBid), ', Current Bid: ', num2str(obj.currentBid), ', Leading Bidder ID:', num2str(obj.leadingBidder.getID)];
+            description = ['Lot ID: ', num2str(obj.lotID), ...
+                ', Starting Bid: ', num2str(obj.startingBid), ...
+                ', Current Bid: ', num2str(obj.currentBid), ...
+                ', Leading Bidder ID:', num2str(obj.leadingBidder)];
             disp(description);  % If you want to print it directly as well
         end
 
