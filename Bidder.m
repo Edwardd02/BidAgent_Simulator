@@ -1,4 +1,4 @@
-classdef Bidder
+classdef Bidder < handle
     properties (Access = private)
         bidderID double
         % Individual's budget for the current auction round
@@ -8,34 +8,35 @@ classdef Bidder
         currentBid double
         % Individual's maximum bidding 
         % threshold for the auction lot
-        maxBid double 
+        % dictionary variable type
+        maxBid containers.Map
         % Individual's current bidding strategy
         strategy
     end
     
     methods
         % Constructor method to create a new bidder
-        function obj = Bidder(bidderID, budget, maxBid, strategy)
+        function obj = Bidder(bidderID, budget, initialMaxBids, strategy)
             obj.bidderID = bidderID;
             obj.budget = budget;
-            obj.maxBid = maxBid;
+            if isa(initialMaxBids, 'containers.Map')
+                obj.maxBid = initialMaxBids;
+            else
+                error('initialMaxBids must be a containers.Map object');
+            end
             obj.strategy = strategy;
         end
         
         % Method to place a bid
-        function obj = placeBid(obj, currentBid, ...
-                leadingBidder)
+        function obj = placeBid(obj, AuctionLot)
            % The currentLeadingBidder will usually wait for next round
-           if leadingBidder ~= obj.bidderID 
+           if AuctionLot.getLeadingBidder ~= obj.bidderID
+               AuctionLot.getID
+               maxBidToLot = obj.maxBid(AuctionLot.getID);
                obj.currentBid = obj.strategy.generateBid(...
-                   currentBid, obj.maxBid, obj.budget);
+                   AuctionLot.getCurrentBid, maxBidToLot, obj.budget);
+               
            end
-        end
-        
-        function description = toString(obj)
-            % This function now returns a string instead of modifying the object or directly displaying.
-            description = ['Bidder ID: ', num2str(obj.bidderID), ', Bidder Budget: ', num2str(obj.budget), ', Bidder Max Bidding: ', num2str(obj.maxBid)];
-            disp(description);  % If you want to print it directly as well
         end
         
         function iD = getID(obj)
@@ -46,7 +47,21 @@ classdef Bidder
             currentBid = obj.currentBid;
         end
         
-        
+        function description = toString(obj)
+            % This function now returns a string instead of modifying the object or directly displaying.
+            description = ['Bidder ID: ', num2str(obj.bidderID), ', Bidder Budget: ', num2str(obj.budget),...
+                obj.maxBidToString];
+            disp(description);  % If you want to print it directly as well
+        end
+        function maxBidStr = maxBidToString(obj)        
+            keySet = keys(obj.maxBid);
+            valueSet = values(obj.maxBid);
+            maxBidStr = 'Max Bids: ';
+            % Loop through all key-value pairs and append them to the string
+            for i = 1:length(keySet)
+                maxBidStr = [maxBidStr, 'Lot ', num2str(keySet{i}), ': $', num2str(valueSet{i}), '; '];
+            end
+        end
 
         % Additional methods as needed
     end

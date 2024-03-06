@@ -19,11 +19,8 @@ classdef AuctionSimulator
                 for round = 1:obj.MaxRounds % loop through rounds
                     disp(['Round ' num2str(round) ':']); % Display round
                     for i = 1:length(obj.arrBidders) % loop through bidders
-                        % placeBid(obj,
-                        % currentBid,leadingBidderID)
-                        currentBidderBid = obj.arrBidders(i).placeBid(...
-                            obj.arrAuctionLots(lot).getCurrentBid,...
-                            obj.arrAuctionLots(lot).getLeadingBidder).getCurrentBid;
+                        
+                        currentBidderBid = obj.arrBidders(i).placeBid(obj.arrAuctionLots(lot)).getCurrentBid;
                         if currentBidderBid > obj.arrAuctionLots(lot).getCurrentBid
                             obj.arrAuctionLots(lot).setCurrentBid(currentBidderBid);
                             obj.arrAuctionLots(lot).setLeadingBidder(obj.arrBidders(i).getID);

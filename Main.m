@@ -6,15 +6,21 @@ numOfAuctionLot = 5;
 incrementFactor = .05;
 maxRounds = 30;
 strategyInstanceDefault = DefaultStrategy(incrementFactor);
-
-arrBidders = repmat(Bidder(0, 0, 0, strategyInstanceDefault), numOfBidders, 1);
 arrAuctionLots = repmat(AuctionLot(0, 0, 0), numOfAuctionLot, 1);
-% initializing Bidders
+
+% initialization for Bidders
+arrBidders = Bidder.empty(numOfBidders, 0); % Correct approach for preallocating empty array of objects
 for i = 1:numOfBidders
-    budget = rand(1) * 100000 + 10000;
-    maxBid = rand(1) * 10000 + 1000;
-    arrBidders(i) = Bidder(i, budget, maxBid, strategyInstanceDefault); % bidderID, budget, maxBid, strategy
+    initialMaxBids = containers.Map('KeyType', 'double', 'ValueType', 'double');
+    for j = 1:numOfAuctionLot
+        lotID = j;
+        maxBid = rand(1) * 10000 + 1000; % Random max bid for this lot
+        initialMaxBids(lotID) = maxBid;
+    end
+    budget = rand(1) * 100000 + 10000; % Random budget for each bidder
+    arrBidders(i) = Bidder(i, budget, initialMaxBids, strategyInstanceDefault); % bidderID, budget, maxBids for lots, strategy
 end
+
 % initializing AuctionLots
 for i = 1:numOfAuctionLot
     startingBid = rand(1) * 1000 + 100;
