@@ -1,5 +1,5 @@
 classdef AuctionLot
-    properties
+    properties (Access = private)
         lotID string
         startingBid double
         currentBid double

@@ -1,50 +1,35 @@
 classdef AuctionSimulator
-    properties
-        auctions % Array of Auction objects
-        bidders % Array of Bidder objects
-        products % Array of Product objects
+    properties (Access = private)
+        AuctionLots % Array of Product objects
+        Bidders % Array of Bidder objects
+        MaxRounds % Maximum number of bidding rounds
     end
     
     methods
-        function obj = AuctionSimulator()
-            % Constructor for the AuctionSimulator class.
-            obj.auctions = []; % Initialize empty arrays
-            obj.bidders = [];
-            obj.products = [];
-            
-            % Example initialization (you would replace this with actual logic to initialize your simulation environment)
-            obj = obj.setupSimulationEnvironment();
+        % Constructor method to initialize the simulation
+        function obj = AuctionSimulation(auctionLots, bidders, maxRounds)
+            obj.AuctionLots = auctionLots;
+            obj.Bidders = bidders;
+            obj.MaxRounds = maxRounds;
         end
         
-        function obj = setupSimulationEnvironment(obj)
-            % Setup the simulation environment by initializing bidders, products, and auctions.
-            
-            % Example of adding products (you would customize this)
-            obj.products = [Product(1, 'Art Piece', 100), Product(2, 'Vintage Car', 50000)];
-            
-
-            obj.bidders = [Bidder(1, "aggressiveStrategy", 1000), Bidder(2, "conservativeStrategy", 1000)];
-            
-            % Initialize auctions with products (simplified example)
-            obj.auctions = [Auction(1, obj.products(1)), Auction(2, obj.products(2))];
-        end
-        
+        % Method to run the simulation
         function run(obj)
-            % Run the simulation.
-            % This method simulates the auction process, where bidders place bids on auctions.
-            
-            for auction = obj.auctions
-                fprintf('Starting auction for %s\n', auction.product.description);
-                
-                for bidder = obj.bidders
-                    bidAmount = bidder.placeBid(auction);
-                    auction.acceptBid(bidder, bidAmount);
-                    fprintf('Bidder %d placed a bid of %f on %s\n', bidder.ID, bidAmount, auction.product.description);
+            for round = 1:obj.MaxRounds
+                disp(['Round ' num2str(round) ':']);
+                for i = 1:length(obj.Bidders)
+                    % Each bidder places a bid based on their strategy
+                    currentHighestBid = ... % Determine the current highest bid for the product being auctioned
+                    obj.Bidders(i).placeBid(currentHighestBid);
+                    % Update auction state based on the new bid
+                    % This may include updating the leading bid for the product,
+                    % notifying other bidders, etc.
                 end
-                
-                winner = auction.determineWinner();
-                fprintf('Auction for %s won by Bidder %d with a bid of %f\n', auction.product.description, winner.ID, winner.bidAmount);
+                % Check auction conditions, update product status, etc.
+                % Display round results
             end
+            % Finalize auction results, determine winners, etc.
         end
     end
 end
+
