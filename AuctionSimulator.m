@@ -29,6 +29,9 @@ classdef AuctionSimulator
                         disp(["Bidder has bidder ID: ", ...
                             num2str(obj.arrAuctionLots(lot).getLeadingBidder),...
                             "won lot has lot ID", num2str(obj.arrAuctionLots(lot).getID)]);
+                        budget = obj.arrBidders(obj.arrAuctionLots(lot).getLeadingBidder).getBudget...
+                            - obj.arrAuctionLots(lot).getCurrentBid;
+                        obj.arrBidders(obj.arrAuctionLots(lot).getLeadingBidder).setBudget(budget);
                     end
                 end
             end

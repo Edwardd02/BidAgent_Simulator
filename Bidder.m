@@ -46,6 +46,14 @@ classdef Bidder < handle
             currentBid = obj.currentBid;
         end
         
+        function budget = getBudget(obj)
+            budget = obj.budget;
+        end
+
+        function obj = setBudget(obj, budget)
+            obj.budget = budget;
+        end
+
         function description = toString(obj)
             % This function now returns a string instead of modifying the object or directly displaying.
             description = ['Bidder ID: ', num2str(obj.bidderID), ', Bidder Budget: ', num2str(obj.budget),...

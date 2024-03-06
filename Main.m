@@ -27,7 +27,12 @@ for i = 1:numOfAuctionLot
     minIncrement = startingBid * incrementFactor;
     arrAuctionLots(i) = AuctionLot(i, startingBid, minIncrement); % lotID, startingBid, minIncrement
 end
-
+for i = 1:numOfBidders
+    arrBidders(i).toString();
+end
+for i = 1:numOfAuctionLot
+    arrAuctionLots(i).toString();
+end
 Auction1 = AuctionSimulator(arrAuctionLots, arrBidders, maxRounds); % arrAuctionLots, arrBidders, maxRounds
 Auction1.run;
 %Tests
