@@ -21,13 +21,13 @@ classdef AuctionSimulator
                     for i = 1:length(obj.arrBidders) % loop through bidders
                         % placeBid(obj,
                         % currentBid,leadingBidderID)
-                        obj.arrBidders(i).placeBid(...
+                        currentBidderBid = obj.arrBidders(i).placeBid(...
                             obj.arrAuctionLots(lot).getCurrentBid,...
-                            obj.arrAuctionLots(lot).getLeadingBidder);
-                        
-                        if obj.arrBidders(i).getCurrentBid > obj.arrAuctionLots(lot).getCurrentBid
+                            obj.arrAuctionLots(lot).getLeadingBidder).getCurrentBid;
+                        if currentBidderBid > obj.arrAuctionLots(lot).getCurrentBid
                             obj.arrAuctionLots(lot).setCurrentBid(currentBidderBid);
                             obj.arrAuctionLots(lot).setLeadingBidder(obj.arrBidders(i).getID);
+
                         end
                     end
                 end

@@ -3,10 +3,10 @@ classdef Bidder
         bidderID double
         % Individual's budget for the current auction round
         budget double
-        % Individual's psychological valuation for the 
+        % Individual's valuation for the 
         % auction item in the current bidding session
         currentBid double
-        % Individual's maximum psychological bidding 
+        % Individual's maximum bidding 
         % threshold for the auction lot
         maxBid double 
         % Individual's current bidding strategy
@@ -46,13 +46,7 @@ classdef Bidder
             currentBid = obj.currentBid;
         end
         
-        function obj = setID(ID)
-            obj.bidderID = ID;
-        end
         
-        function obj = setCurrentBid(currentBid)
-            obj.currentBid = currentBid;
-        end
 
         % Additional methods as needed
     end

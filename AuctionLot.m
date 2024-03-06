@@ -1,4 +1,4 @@
-classdef AuctionLot
+classdef AuctionLot < handle
     properties (Access = private)
         lotID string
         startingBid double
@@ -45,5 +45,15 @@ classdef AuctionLot
         function leadingBidder = getLeadingBidder(obj)
             leadingBidder = obj.leadingBidder;
         end
+
+        function obj = setCurrentBid(obj, currentBid)
+            obj.currentBid = currentBid;
+        end
+
+        function obj = setLeadingBidder(obj, leadingBidder)
+            obj.leadingBidder = leadingBidder;
+        end
+        
+
     end
 end
