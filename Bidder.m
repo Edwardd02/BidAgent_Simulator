@@ -31,7 +31,10 @@ classdef Bidder
             description = ['Bidder ID: ', num2str(obj.bidderID), ', Bidder Budget: ', num2str(obj.budget), ', Bidder Max Bidding: ', num2str(obj.maxBid)];
             disp(description);  % If you want to print it directly as well
         end
-
+        
+        function iD = getID(obj)
+            iD = obj.bidderID;
+        end
         % Additional methods as needed
     end
 end

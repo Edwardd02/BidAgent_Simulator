@@ -15,7 +15,7 @@ classdef AuctionLot
             obj.currentBid = startingBid; 
             % Initial current bid is the starting bid
             obj.minIncrement = minIncrement;
-            obj.leadingBidder = Bidder("", 0); 
+            obj.leadingBidder = Bidder(-1, 0, 0, nan); 
             % Initialized with a dummy bidder
         end
         
@@ -34,6 +34,10 @@ classdef AuctionLot
             hasBid = ~isempty(obj.leadingBidder.Name); % Checks if there's a leading bidder
         end
         
-        % Additional methods as needed for your auction logic
+        function description = toString(obj)
+            % This function now returns a string instead of modifying the object or directly displaying.
+            description = ['Lot ID: ', num2str(obj.lotID), ', Starting Bid: ', num2str(obj.startingBid), ', Current Bid: ', num2str(obj.currentBid), ', Leading Bidder ID:', num2str(obj.leadingBidder.getID)];
+            disp(description);  % If you want to print it directly as well
+        end
     end
 end
