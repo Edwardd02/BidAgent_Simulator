@@ -17,15 +17,18 @@ classdef AuctionSimulator
         function run(obj) 
             for lot = 1:length(obj.arrAuctionLots) % loop through Lots
                 for round = 1:obj.MaxRounds % loop through rounds
-                    disp(['Round ' num2str(round) ':']); % Display round
                     for i = 1:length(obj.arrBidders) % loop through bidders
-                        
                         currentBidderBid = obj.arrBidders(i).placeBid(obj.arrAuctionLots(lot)).getCurrentBid;
                         if currentBidderBid > obj.arrAuctionLots(lot).getCurrentBid
                             obj.arrAuctionLots(lot).setCurrentBid(currentBidderBid);
                             obj.arrAuctionLots(lot).setLeadingBidder(obj.arrBidders(i).getID);
 
                         end
+                    end
+                    if round == obj.MaxRounds
+                        disp(["Bidder has bidder ID: ", ...
+                            num2str(obj.arrAuctionLots(lot).getLeadingBidder),...
+                            "won lot has lot ID", num2str(obj.arrAuctionLots(lot).getID)]);
                     end
                 end
             end

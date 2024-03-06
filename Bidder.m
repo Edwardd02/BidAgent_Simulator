@@ -31,7 +31,6 @@ classdef Bidder < handle
         function obj = placeBid(obj, AuctionLot)
            % The currentLeadingBidder will usually wait for next round
            if AuctionLot.getLeadingBidder ~= obj.bidderID
-               AuctionLot.getID
                maxBidToLot = obj.maxBid(AuctionLot.getID);
                obj.currentBid = obj.strategy.generateBid(...
                    AuctionLot.getCurrentBid, maxBidToLot, obj.budget);
@@ -56,7 +55,7 @@ classdef Bidder < handle
         function maxBidStr = maxBidToString(obj)        
             keySet = keys(obj.maxBid);
             valueSet = values(obj.maxBid);
-            maxBidStr = 'Max Bids: ';
+            maxBidStr = ' Max Bids: ';
             % Loop through all key-value pairs and append them to the string
             for i = 1:length(keySet)
                 maxBidStr = [maxBidStr, 'Lot ', num2str(keySet{i}), ': $', num2str(valueSet{i}), '; '];
