@@ -3,9 +3,8 @@ function Main
 % initialization
 numOfBidders = 30;
 numOfAuctionLot = 5;
-incrementFactor = .05;
-maxRounds = 30;
-strategyInstanceDefault = DefaultStrategy(incrementFactor);
+minIncrementFactor = 0.05;
+maxRounds = 10;
 arrAuctionLots = repmat(AuctionLot(0, 0, 0), numOfAuctionLot, 1);
 
 % initialization for Bidders
@@ -18,25 +17,23 @@ for i = 1:numOfBidders
         initialMaxBids(lotID) = maxBid;
     end
     budget = rand(1) * 100000 + 10000; % Random budget for each bidder
+    incrementFactor = rand(1) * 0.05;
+    strategyInstanceDefault = DefaultStrategy(incrementFactor);
     arrBidders(i) = Bidder(i, budget, initialMaxBids, strategyInstanceDefault); % bidderID, budget, maxBids for lots, strategy
 end
 
 % initializing AuctionLots
 for i = 1:numOfAuctionLot
     startingBid = rand(1) * 1000 + 100;
-    minIncrement = startingBid * incrementFactor;
+    minIncrement = startingBid * minIncrementFactor;
     arrAuctionLots(i) = AuctionLot(i, startingBid, minIncrement); % lotID, startingBid, minIncrement
 end
-for i = 1:numOfBidders
-    arrBidders(i).toString();
-end
-for i = 1:numOfAuctionLot
-    arrAuctionLots(i).toString();
-end
+
+
 Auction1 = AuctionSimulator(arrAuctionLots, arrBidders, maxRounds); % arrAuctionLots, arrBidders, maxRounds
 Auction1.run;
 %Tests
-% Test on Initialization
+%Test on Initialization
 for i = 1:numOfBidders
     arrBidders(i).toString();
 end

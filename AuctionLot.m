@@ -3,7 +3,7 @@ classdef AuctionLot < handle
         lotID double
         startingBid double
         currentBid double
-        minIncrement double
+        minIncrement double %TODO:
         leadingBidder double 
     end
     
