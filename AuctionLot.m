@@ -38,7 +38,10 @@ classdef AuctionLot < handle
         function leadingBidder = getLeadingBidder(obj)
             leadingBidder = obj.leadingBidder;
         end
-
+        
+        function minIncrement = getMinIncrement(obj)
+            minIncrement = obj.minIncrement;
+        end
         function obj = setCurrentBid(obj, currentBid)
             obj.currentBid = currentBid;
         end

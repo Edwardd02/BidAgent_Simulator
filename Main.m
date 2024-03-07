@@ -3,12 +3,20 @@ function Main
 % initialization
 numOfBidders = 30;
 numOfAuctionLot = 5;
-minIncrementFactor = 0.05;
+minIncrementFactor = 0.03;
 maxRounds = 10;
-arrAuctionLots = repmat(AuctionLot(0, 0, 0), numOfAuctionLot, 1);
+
+
+% initializing AuctionLots
+arrAuctionLots = AuctionLot.empty(numOfAuctionLot, 0);
+for i = 1:numOfAuctionLot
+    startingBid = rand(1) * 1000 + 100;
+    minIncrement = startingBid * minIncrementFactor;
+    arrAuctionLots(i) = AuctionLot(i, startingBid, minIncrement); % lotID, startingBid, minIncrement
+end
 
 % initialization for Bidders
-arrBidders = Bidder.empty(numOfBidders, 0); % Correct approach for preallocating empty array of objects
+arrBidders = Bidder.empty(numOfBidders, 0); % Preallocating empty array of objects
 for i = 1:numOfBidders
     initialMaxBids = containers.Map('KeyType', 'double', 'ValueType', 'double');
     for j = 1:numOfAuctionLot
@@ -22,12 +30,6 @@ for i = 1:numOfBidders
     arrBidders(i) = Bidder(i, budget, initialMaxBids, strategyInstanceDefault); % bidderID, budget, maxBids for lots, strategy
 end
 
-% initializing AuctionLots
-for i = 1:numOfAuctionLot
-    startingBid = rand(1) * 1000 + 100;
-    minIncrement = startingBid * minIncrementFactor;
-    arrAuctionLots(i) = AuctionLot(i, startingBid, minIncrement); % lotID, startingBid, minIncrement
-end
 
 
 Auction1 = AuctionSimulator(arrAuctionLots, arrBidders, maxRounds); % arrAuctionLots, arrBidders, maxRounds

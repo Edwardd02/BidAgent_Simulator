@@ -33,7 +33,7 @@ classdef Bidder < handle
            if AuctionLot.getLeadingBidder ~= obj.bidderID
                maxBidToLot = obj.maxBid(AuctionLot.getID);
                obj.currentBid = obj.strategy.generateBid(...
-                   AuctionLot.getCurrentBid, maxBidToLot, obj.budget);
+                   AuctionLot.getCurrentBid, maxBidToLot, obj.budget, AuctionLot.getMinIncrement);
                
            end
         end

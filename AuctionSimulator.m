@@ -26,14 +26,21 @@ classdef AuctionSimulator
                         end
                     end
                     if round == obj.MaxRounds
-                        finalPrice = obj.arrAuctionLots(lot).getCurrentBid;
-                        disp(['Bidder has bidder ID: ' ...
-                            , num2str(obj.arrAuctionLots(lot).getLeadingBidder), ...
-                            ', won the lot has lot ID: ', num2str(obj.arrAuctionLots(lot).getID)...
-                            , ', with ', num2str(finalPrice), ' dollars.']);
-                        budget = obj.arrBidders(obj.arrAuctionLots(lot).getLeadingBidder).getBudget...
-                            - finalPrice;
-                        obj.arrBidders(obj.arrAuctionLots(lot).getLeadingBidder).setBudget(budget);
+                        winnerID = obj.arrAuctionLots(lot).getLeadingBidder;
+                        lotID = obj.arrAuctionLots(lot).getID;
+                        if winnerID ~= -1
+                            finalPrice = obj.arrAuctionLots(lot).getCurrentBid;
+                            disp(['Bidder has bidder ID: ' ...
+                                , num2str(winnerID), ...
+                                ', won the lot has lot ID: ', num2str(lotID)...
+                                , ', with ', num2str(finalPrice), ' dollars.']);
+                            budget = obj.arrBidders(winnerID).getBudget...
+                                - finalPrice;
+                            obj.arrBidders(winnerID).setBudget(budget);
+                        else
+                            disp(['Failed to sell at this auction lot, lot ID: ' ...
+                                , num2str(lotID)])
+                        end
                     end
                 end
             end
