@@ -46,6 +46,10 @@ classdef Bidder < handle
             currentBid = obj.currentBid;
         end
         
+        function maxBid = getMaxBidding(obj)
+            maxBid = obj.maxBid;
+        end
+        
         function budget = getBudget(obj)
             budget = obj.budget;
         end

@@ -25,20 +25,35 @@ classdef AuctionSimulator
 
                         end
                     end
-                    if round == obj.MaxRounds
+                    if round == obj.MaxRounds % fprintfaly Winner Info for This Particular Lot
                         winnerID = obj.arrAuctionLots(lot).getLeadingBidder;
                         lotID = obj.arrAuctionLots(lot).getID;
-                        if winnerID ~= -1
+                        largestMaxBidID = -1;
+                        largestMaxBid = -1;
+                        for i = 1:length(obj.arrBidders)
+                            
+                            mapMaxBid = obj.arrBidders(i).getMaxBidding;
+                            if largestMaxBid < mapMaxBid(lot)
+                                largestMaxBid = mapMaxBid(lot);
+                                largestMaxBidID = obj.arrBidders(i).getID;
+                            end
+                        end
+                        fprintf(['Bidder has bidder ID: ' ...
+                                , num2str(largestMaxBidID), ...
+                                ', has the largest max bid on Lot: ', num2str(lotID)...
+                                , ', the max bid is: ', num2str(largestMaxBid)...
+                                ,'\n\n']);
+                        if winnerID ~= -1 % When there's a winner
                             finalPrice = obj.arrAuctionLots(lot).getCurrentBid;
-                            disp(['Bidder has bidder ID: ' ...
+                            fprintf(['Bidder has bidder ID: ' ...
                                 , num2str(winnerID), ...
                                 ', won the lot has lot ID: ', num2str(lotID)...
-                                , ', with ', num2str(finalPrice), ' dollars.']);
+                                , ', with ', num2str(finalPrice), ' dollars.\n\n']);
                             budget = obj.arrBidders(winnerID).getBudget...
                                 - finalPrice;
                             obj.arrBidders(winnerID).setBudget(budget);
                         else
-                            disp(['Failed to sell at this auction lot, lot ID: ' ...
+                            fprintf(['Failed to sell at this auction lot, lot ID: ' ...
                                 , num2str(lotID)])
                         end
                     end

@@ -6,7 +6,6 @@ numOfAuctionLot = 5;
 minIncrementFactor = 0.03;
 maxRounds = 10;
 
-
 % initializing AuctionLots
 arrAuctionLots = AuctionLot.empty(numOfAuctionLot, 0);
 for i = 1:numOfAuctionLot
@@ -36,10 +35,10 @@ Auction1 = AuctionSimulator(arrAuctionLots, arrBidders, maxRounds); % arrAuction
 Auction1.run;
 %Tests
 %Test on Initialization
-for i = 1:numOfBidders
-    arrBidders(i).toString();
-end
-for i = 1:numOfAuctionLot
-    arrAuctionLots(i).toString();
-end
+% for i = 1:numOfBidders
+%     arrBidders(i).toString();
+% end
+% for i = 1:numOfAuctionLot
+%     arrAuctionLots(i).toString();
+% end
 

@@ -3,8 +3,9 @@ classdef AuctionLot < handle
         lotID double
         startingBid double
         currentBid double
-        minIncrement double %TODO:
+        minIncrement double
         leadingBidder double 
+        % actualValue double
     end
     
     methods
