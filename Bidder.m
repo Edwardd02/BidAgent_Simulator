@@ -28,12 +28,13 @@ classdef Bidder < handle
         end
         
         % Method to place a bid
-        function obj = placeBid(obj, AuctionLot)
+        function obj = placeBid(obj, AuctionLot, round, maxRounds)
+           roundsToLast = maxRounds - round;
            % The currentLeadingBidder will usually wait for next round
            if AuctionLot.getLeadingBidder ~= obj.bidderID
                maxBidToLot = obj.maxBid(AuctionLot.getID);
                obj.currentBid = obj.strategy.generateBid(...
-                   AuctionLot.getCurrentBid, maxBidToLot, obj.budget, AuctionLot.getMinIncrement);
+                   AuctionLot.getCurrentBid, maxBidToLot, obj.budget, AuctionLot.getMinIncrement, roundsToLast); %Todo
                
            end
         end

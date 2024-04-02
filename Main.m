@@ -25,7 +25,7 @@ for i = 1:numOfBidders
     end
     budget = rand(1) * 100000 + 10000; % Random budget for each bidder
     incrementFactor = rand(1) * 0.05;
-    strategyInstanceDefault = DefaultStrategy(incrementFactor);
+    strategyInstanceDefault = SimpleIncrementStrategy(incrementFactor);
     arrBidders(i) = Bidder(i, budget, initialMaxBids, strategyInstanceDefault); % bidderID, budget, maxBids for lots, strategy
 end
 
