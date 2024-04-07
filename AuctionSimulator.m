@@ -46,21 +46,16 @@ classdef AuctionSimulator
 
         
         function highestBid = processRound(obj, lotIndex, round)
-            % Initialize highestBid for this round as 0
-            highestBid = 0;
-    
-            % Loop through each bidder
+            highestBid = obj.auctionLots(lotIndex).getCurrentBid(); % Initialize with the current highest bid for the lot
             for bidderIndex = 1:length(obj.bidders)
-                % Each bidder places a bid for the current lot and round, 
-                % and we fetch the current bid placed by this bidder
+            % Simulate bid by each bidder
                 currentBid = obj.bidders(bidderIndex).placeBid(obj.auctionLots(lotIndex), round, obj.maxRounds).getCurrentBid;
         
-                % If the current bid is higher than the current highest bid for the lot,
-                % update the lot's current bid and leading bidder, and set the highestBid to currentBid
-                if currentBid > obj.auctionLots(lotIndex).getCurrentBid
-                    obj.auctionLots(lotIndex).setCurrentBid(currentBid);
-                    obj.auctionLots(lotIndex).setLeadingBidder(obj.bidders(bidderIndex).getID);
-                    highestBid = currentBid;
+                % Check if the current bid is higher than the highest bid so far
+                if currentBid > highestBid
+                    highestBid = currentBid; % Update highest bid
+                    obj.auctionLots(lotIndex).setCurrentBid(highestBid); % Update the lot's current highest bid
+                    obj.auctionLots(lotIndex).setLeadingBidder(obj.bidders(bidderIndex).getID); % Update leading bidder
                 end
             end
         end
