@@ -69,7 +69,7 @@ classdef AuctionSimulator
             xlabel('Round');
             ylabel('Bid Amount');
             drawnow; % Refresh the plot
-            pause(0.5); % Short pause for visualization
+            %pause(0.5); % Short pause for visualization
         end
         
         % Announce winners and maximum bidders after the final round
