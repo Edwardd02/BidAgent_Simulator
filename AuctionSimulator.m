@@ -1,66 +1,114 @@
 classdef AuctionSimulator
     properties (Access = private)
-        arrAuctionLots % Array of Product objects
-        arrBidders % Array of Bidder objects
-        MaxRounds % Maximum number of bidding rounds
+        auctionLots   % Array of Product objects
+        bidders       % Array of Bidder objects
+        maxRounds     % Maximum number of bidding rounds
     end
     
     methods
         % Constructor method to initialize the simulation
-        function obj = AuctionSimulator(arrAuctionLots, arrBidders, maxRounds)
-            obj.arrAuctionLots = arrAuctionLots;
-            obj.arrBidders = arrBidders;
-            obj.MaxRounds = maxRounds;
+        function obj = AuctionSimulator(auctionLots, bidders, maxRounds)
+            obj.auctionLots = auctionLots;
+            obj.bidders = bidders;
+            obj.maxRounds = maxRounds;
         end
         
         % Method to run the simulation
-        function run(obj) 
-            for lot = 1:length(obj.arrAuctionLots) % loop through Lots
-                for round = 1:obj.MaxRounds % loop through rounds
-                    for i = 1:length(obj.arrBidders) % loop through bidders
-                        currentBidderBid = obj.arrBidders(i).placeBid(obj.arrAuctionLots(lot), round, obj.MaxRounds).getCurrentBid;
-                   
-                        if currentBidderBid > obj.arrAuctionLots(lot).getCurrentBid
-                            obj.arrAuctionLots(lot).setCurrentBid(currentBidderBid);
-                            obj.arrAuctionLots(lot).setLeadingBidder(obj.arrBidders(i).getID);
+        function run(obj)
+            figure; % Initialize figure for visualization
+            for lotIndex = 1:length(obj.auctionLots)
+                bidsOverRounds = zeros(1, obj.maxRounds); % Track bids for each round
+                obj.processBiddingForLot(lotIndex, bidsOverRounds);
+            end
+        end
+    end
+    
+    methods (Access = private)
+        % Helper method to process bidding for a single auction lot
+        function processBiddingForLot(obj, lotIndex, bidsOverRounds)
+            % Loop through each bidding round up to the maximum rounds set for the auction
+            for round = 1:obj.maxRounds
+                % Call processRound method to handle the bidding for this round and lot,
+                % and capture the highest bid made during the round
+                highestBid = processRound(obj, lotIndex, round);
+        
+                % Store the highest bid of the current round in the bidsOverRounds array
+                bidsOverRounds(round) = highestBid;
+        
+                % Update the plot with the new bid information for visualization
+                obj.updatePlot(lotIndex, round, bidsOverRounds);
+            end
+    
+            % After all rounds have been processed for this lot,
+            % call announceWinners to display the winner and their bid
+            obj.announceWinners(lotIndex);
+        end
 
-                        end
-                    end
-                    if round == obj.MaxRounds % fprintfaly Winner Info for This Particular Lot
-                        winnerID = obj.arrAuctionLots(lot).getLeadingBidder;
-                        lotID = obj.arrAuctionLots(lot).getID;
-                        largestMaxBidID = -1;
-                        largestMaxBid = -1;
-                        for i = 1:length(obj.arrBidders)
-                            
-                            mapMaxBid = obj.arrBidders(i).getMaxBidding;
-                            if largestMaxBid < mapMaxBid(lot)
-                                largestMaxBid = mapMaxBid(lot);
-                                largestMaxBidID = obj.arrBidders(i).getID;
-                            end
-                        end
-                        fprintf(['Bidder has bidder ID: ' ...
-                                , num2str(largestMaxBidID), ...
-                                ', has the largest max bid on Lot: ', num2str(lotID)...
-                                , ', the max bid is: ', num2str(largestMaxBid)...
-                                ,'\n\n']);
-                        if winnerID ~= -1 % When there's a winner
-                            finalPrice = obj.arrAuctionLots(lot).getCurrentBid;
-                            fprintf(['Bidder has bidder ID: ' ...
-                                , num2str(winnerID), ...
-                                ', won the lot has lot ID: ', num2str(lotID)...
-                                , ', with ', num2str(finalPrice), ' dollars.\n\n']);
-                            budget = obj.arrBidders(winnerID).getBudget...
-                                - finalPrice;
-                            obj.arrBidders(winnerID).setBudget(budget);
-                        else
-                            fprintf(['Failed to sell at this auction lot, lot ID: ' ...
-                                , num2str(lotID)])
-                        end
-                    end
+        
+        function highestBid = processRound(obj, lotIndex, round)
+            % Initialize highestBid for this round as 0
+            highestBid = 0;
+    
+            % Loop through each bidder
+            for bidderIndex = 1:length(obj.bidders)
+                % Each bidder places a bid for the current lot and round, 
+                % and we fetch the current bid placed by this bidder
+                currentBid = obj.bidders(bidderIndex).placeBid(obj.auctionLots(lotIndex), round, obj.maxRounds).getCurrentBid;
+        
+                % If the current bid is higher than the current highest bid for the lot,
+                % update the lot's current bid and leading bidder, and set the highestBid to currentBid
+                if currentBid > obj.auctionLots(lotIndex).getCurrentBid
+                    obj.auctionLots(lotIndex).setCurrentBid(currentBid);
+                    obj.auctionLots(lotIndex).setLeadingBidder(obj.bidders(bidderIndex).getID);
+                    highestBid = currentBid;
                 end
+            end
+        end
+
+        
+        % Update plot for each round
+        function updatePlot(obj, lotIndex, round, bidsOverRounds)
+            subplot(length(obj.auctionLots), 1, lotIndex);
+            plot(1:round, bidsOverRounds(1:round), '-o');
+            title(['Auction Lot ', num2str(lotIndex)]);
+            xlabel('Round');
+            ylabel('Bid Amount');
+            drawnow; % Refresh the plot
+            pause(0.5); % Short pause for visualization
+        end
+        
+        % Announce winners and maximum bidders after the final round
+        function announceWinners(obj, lotIndex)
+        winnerID = obj.auctionLots(lotIndex).getLeadingBidder;
+        lotID = obj.auctionLots(lotIndex).getID;
+        largestMaxBidID = -1;
+        largestMaxBid = -1;
+
+            % Find the bidder with the largest max bid for this lot
+            for bidderIndex = 1:length(obj.bidders)
+                mapMaxBid = obj.bidders(bidderIndex).getMaxBidding;
+                if largestMaxBid < mapMaxBid(lotIndex)
+                    largestMaxBid = mapMaxBid(lotIndex);
+                    largestMaxBidID = obj.bidders(bidderIndex).getID;
+                end
+            end
+
+            % Print details about the largest max bid
+            fprintf('Bidder with ID: %d, has the largest max bid on Lot: %d, the max bid is: %.2f\n\n', largestMaxBidID, lotID, largestMaxBid);
+
+            % If there is a winner, announce them and adjust their budget
+            if winnerID ~= -1
+                finalPrice = obj.auctionLots(lotIndex).getCurrentBid;
+                fprintf('Bidder with ID: %d, won the lot with ID: %d, with a final bid of: %.2f dollars.\n\n', winnerID, lotID, finalPrice);
+        
+                % Update the winner's budget
+                winnerBudget = obj.bidders(winnerID).getBudget - finalPrice;
+                obj.bidders(winnerID).setBudget(winnerBudget);
+            else
+                fprintf('Failed to sell at this auction lot, lot ID: %d\n', lotID);
             end
         end
     end
 end
+
 

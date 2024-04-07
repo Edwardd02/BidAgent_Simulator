@@ -2,7 +2,7 @@ function Main
 
 % initialization
 numOfBidders = 30;
-numOfAuctionLot = 5;
+numOfAuctionLot = 1;
 minIncrementFactor = 0.03;
 maxRounds = 10;
 
