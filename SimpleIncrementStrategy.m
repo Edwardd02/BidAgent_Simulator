@@ -13,7 +13,7 @@ classdef SimpleIncrementStrategy < BiddingStrategy
             if probIncrement<=0.5
                 increment = minIncrement;
             else
-                % increment = generateRightHalf(minIncrement, minIncrement/10);
+                % increment = rightHalfNormalDis(minIncrement, minIncrement/10);
                 increment = minIncrement + 1;
             end
             if rand(1)>0.65
@@ -27,7 +27,7 @@ classdef SimpleIncrementStrategy < BiddingStrategy
             string = num2str(obj.incrementFactor);
         end
         % Function to generate one random number from the right half of the distribution
-        function r = generateRightHalf(mu, sigma)
+        function r = rightHalfNormalDis(mu, sigma)
             while true
                 r = normrnd(mu, sigma);
                 if r >= mu

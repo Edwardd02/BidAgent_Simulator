@@ -1,6 +1,7 @@
 classdef SnipingStrategy < BiddingStrategy
     properties
         snipeTiming = 5; % How close to the end of the auction to place the bid
+        % Make this a rate of snipeTiming
     end
     
     methods
@@ -11,12 +12,12 @@ classdef SnipingStrategy < BiddingStrategy
         end
         function bid = generateBid(obj, currentBid, maxBid, budget, minIncrement, roundsToLast)
             % Generate a bid based on the sniping strategy
+            weightToBid = minIncrement * (1 + 2 * 1/(roundsToLast));
             if roundsToLast <= obj.snipeTiming
-                % TODO: when last round is getting closer and closer, the
-                % weight should be getting larger and larger
+                
                 % Time to snipe! Check if we can outbid by at least the minimum increment
                 if (currentBid + minIncrement <= budget) && (currentBid + minIncrement <= maxBid)
-                    bid = currentBid + minIncrement;
+                    bid = currentBid + minIncrement; %TODO, right normal distribution
                 else
                     % Can't bid or don't need to bid yet
                     bid = 0;

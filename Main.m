@@ -4,8 +4,8 @@ function Main
     % Initialization of simulation parameters
     numOfBidders = 30;
     numOfAuctionLot = 2; % Assuming one auction lot for simplicity, but the structure allows for more
-    minIncrementFactor = 0.05;
-    maxRounds = 30;
+    minIncrementFactor = 0.01;
+    maxRounds = 40;
 
     % Initializing AuctionLots
     arrAuctionLots = initializeAuctionLots(numOfAuctionLot, minIncrementFactor);
@@ -37,7 +37,8 @@ function arrBidders = initializeBidders(numOfBidders, numOfAuctionLot, arrAuctio
         budget = 100000; % A fixed budget, since the budget of a bidder doesn't really affect ebay auctions
         % incrementFactor = rand(1) * 0.05; % Generate random increment factor for strategy
         strategySimpleIncrement = SimpleIncrementStrategy; % Initialize bidding strategy
-        snipingTiming = 5;
+        avgSnipingTiming = 10;
+        snipingTiming = 10 - leftHalfNormalDis(avgSnipingTiming, avgSnipingTiming/10); %重写
         strategySniping = SnipingStrategy(snipingTiming);
         if i <= 3 % if i <= 1, then there would be no other agents compete with it in first rounds
             arrBidders(i) = Bidder(i, budget, initialMaxBids, strategySimpleIncrement); % Initialize Bidder object
@@ -56,6 +57,14 @@ function initialMaxBids = initializeMaxBids(numOfAuctionLot, arrAuctionLots)
         maxBid = normrnd(actualValue, actualValue/5); 
         % Generate a random value around stock price of the lot, with normal distribution
         initialMaxBids(lotID) = maxBid;
+    end
+end
+function r = leftHalfNormalDis(mu, sigma)
+    while true
+        r = normrnd(mu, sigma);
+        if r <= mu
+            break
+        end
     end
 end
 
