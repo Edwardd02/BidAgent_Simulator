@@ -3,12 +3,9 @@ classdef Bidder < handle
         bidderID double
         % Individual's budget for the current auction round
         budget double
-        % Individual's valuation for the 
-        % auction item in the current bidding session
+        % Individual's valuation for the auction item in the current bidding session
         currentBid double
-        % Individual's maximum bidding 
-        % threshold for the auction lot
-        % dictionary variable type
+        % Individual's maximum bidding threshold for the auction lotdictionary variable type
         maxBid containers.Map
         % Individual's current bidding strategy
         strategy
@@ -19,6 +16,7 @@ classdef Bidder < handle
         function obj = Bidder(bidderID, budget, initialMaxBids, strategy)
             obj.bidderID = bidderID;
             obj.budget = budget;
+            % Check if initialMaxBids is a containers.Map object, not mandatory
             if isa(initialMaxBids, 'containers.Map')
                 obj.maxBid = initialMaxBids;
             else
@@ -34,7 +32,8 @@ classdef Bidder < handle
            if AuctionLot.getLeadingBidder ~= obj.bidderID
                maxBidToLot = obj.maxBid(AuctionLot.getID);
                obj.currentBid = obj.strategy.generateBid(...
-                   AuctionLot.getCurrentBid, maxBidToLot, obj.budget, AuctionLot.getMinIncrement, roundsToLast); %Todo
+                   AuctionLot.getCurrentBid, maxBidToLot, ...
+                   obj.budget, AuctionLot.getMinIncrement, roundsToLast); %Todo
                
            end
         end
@@ -62,8 +61,8 @@ classdef Bidder < handle
         function description = toString(obj)
             % This function now returns a string instead of modifying the object or directly displaying.
             description = ['Bidder ID: ', num2str(obj.bidderID), ', Bidder Budget: ', num2str(obj.budget),...
-                obj.maxBidToString];
-            disp(description);  % If you want to print it directly as well
+                obj.maxBidToString, obj.strategy.toString];
+            disp(description);  % 
         end
         function maxBidStr = maxBidToString(obj)        
             keySet = keys(obj.maxBid);

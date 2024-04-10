@@ -50,7 +50,9 @@ classdef AuctionSimulator
             for bidderIndex = 1:length(obj.bidders)
             % Simulate bid by each bidder
                 currentBid = obj.bidders(bidderIndex).placeBid(obj.auctionLots(lotIndex), round, obj.maxRounds).getCurrentBid;
-        
+                if bidderIndex == 1
+                    disp(num2str(currentBid));
+                end
                 % Check if the current bid is higher than the highest bid so far
                 if currentBid > highestBid
                     highestBid = currentBid; % Update highest bid

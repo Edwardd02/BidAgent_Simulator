@@ -1,19 +1,40 @@
 classdef SimpleIncrementStrategy < BiddingStrategy
     properties
-        incrementFactor double;
     end
     
     methods
-        function obj = SimpleIncrementStrategy(incrementFactor)
-            obj.incrementFactor = incrementFactor;
+        function obj = SimpleIncrementStrategy()
+
         end
-        function bid = generateBid(obj, currentBid, maxBid, budget, minIncrement, roundsToLast) % Unused arguments: roundToLast
-            proposedBid = currentBid * (1 + obj.incrementFactor);
-            if proposedBid - currentBid > minIncrement
-                bid = min([proposedBid, maxBid, budget]);
+        function bid = generateBid(obj, currentBid, maxBid, budget, minIncrement, roundsToLast) % Unused arguments: budget
+            proposedBid = currentBid;
+            % distribute probablity for increment
+            probIncrement = rand(1);
+            if probIncrement<=0.5
+                increment = minIncrement;
             else
-                bid = currentBid;
+                % increment = generateRightHalf(minIncrement, minIncrement/10);
+                increment = minIncrement + 1;
+            end
+            if rand(1)>0.65
+                proposedBid = currentBid + increment;
+            end
+            bid = min([proposedBid, maxBid]);
+
+        end
+
+        function string = toString(obj)
+            string = num2str(obj.incrementFactor);
+        end
+        % Function to generate one random number from the right half of the distribution
+        function r = generateRightHalf(mu, sigma)
+            while true
+                r = normrnd(mu, sigma);
+                if r >= mu
+                    break
+                end
             end
         end
+
     end
 end

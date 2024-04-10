@@ -1,6 +1,6 @@
 classdef SnipingStrategy < BiddingStrategy
     properties
-        snipeTiming % How close to the end of the auction to place the bid
+        snipeTiming = 5; % How close to the end of the auction to place the bid
     end
     
     methods

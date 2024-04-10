@@ -5,12 +5,12 @@ classdef AuctionLot < handle
         currentBid double
         minIncrement double
         leadingBidder double 
-        % actualValue double
+        actualValue double
     end
     
     methods
         % Constructor method to create a new product
-        function obj = AuctionLot(lotID, startingBid, minIncrement)
+        function obj = AuctionLot(lotID, startingBid, minIncrement, actualValue)
             obj.lotID = lotID;
             obj.startingBid = startingBid;
             obj.currentBid = startingBid; 
@@ -18,6 +18,7 @@ classdef AuctionLot < handle
             obj.minIncrement = minIncrement;
             obj.leadingBidder = -1; 
             % Initialized with a dummy bidder
+            obj.actualValue = actualValue;
         end
        
         
@@ -43,6 +44,11 @@ classdef AuctionLot < handle
         function minIncrement = getMinIncrement(obj)
             minIncrement = obj.minIncrement;
         end
+
+        function actualValue = getActualValue(obj)
+            actualValue = obj.actualValue;
+        end
+
         function obj = setCurrentBid(obj, currentBid)
             obj.currentBid = currentBid;
         end
@@ -50,6 +56,8 @@ classdef AuctionLot < handle
         function obj = setLeadingBidder(obj, leadingBidder)
             obj.leadingBidder = leadingBidder;
         end
+
+        
         
 
     end

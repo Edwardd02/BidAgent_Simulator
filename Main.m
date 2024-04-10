@@ -3,15 +3,15 @@ function Main
 
     % Initialization of simulation parameters
     numOfBidders = 30;
-    numOfAuctionLot = 1; % Assuming one auction lot for simplicity, but the structure allows for more
-    minIncrementFactor = 0.03;
-    maxRounds = 100;
+    numOfAuctionLot = 2; % Assuming one auction lot for simplicity, but the structure allows for more
+    minIncrementFactor = 0.05;
+    maxRounds = 30;
 
     % Initializing AuctionLots
     arrAuctionLots = initializeAuctionLots(numOfAuctionLot, minIncrementFactor);
 
     % Initializing Bidders
-    arrBidders = initializeBidders(numOfBidders, numOfAuctionLot);
+    arrBidders = initializeBidders(numOfBidders, numOfAuctionLot, arrAuctionLots);
 
     % Creating and running the auction simulation
     Auction1 = AuctionSimulator(arrAuctionLots, arrBidders, maxRounds);
@@ -22,30 +22,39 @@ function arrAuctionLots = initializeAuctionLots(numOfAuctionLot, minIncrementFac
     % Preallocates and initializes auction lots with starting bid and minimum increment
     arrAuctionLots = AuctionLot.empty(numOfAuctionLot, 0);
     for i = 1:numOfAuctionLot
-        startingBid = rand(1) * 1000 + 100; % Generate random starting bid
+        startingBid = 200; % Generate random starting bid
         minIncrement = startingBid * minIncrementFactor; % Calculate minimum increment
-        arrAuctionLots(i) = AuctionLot(i, startingBid, minIncrement); % Initialize AuctionLot object
+        actualValue = 889.4; % Unit: Dollars
+        arrAuctionLots(i) = AuctionLot(i, startingBid, minIncrement, actualValue); % Initialize AuctionLot object
     end
 end
 
-function arrBidders = initializeBidders(numOfBidders, numOfAuctionLot)
+function arrBidders = initializeBidders(numOfBidders, numOfAuctionLot, arrAuctionLots)
     % Preallocates and initializes bidders with their budget, max bids, and strategy
     arrBidders = Bidder.empty(numOfBidders, 0); % Preallocating empty array of objects
     for i = 1:numOfBidders
-        initialMaxBids = initializeMaxBids(numOfAuctionLot);
-        budget = rand(1) * 100000 + 10000; % Generate random budget
-        incrementFactor = rand(1) * 0.05; % Generate random increment factor for strategy
-        strategyInstanceDefault = SimpleIncrementStrategy(incrementFactor); % Initialize bidding strategy
-        arrBidders(i) = Bidder(i, budget, initialMaxBids, strategyInstanceDefault); % Initialize Bidder object
+        initialMaxBids = initializeMaxBids(numOfAuctionLot, arrAuctionLots);
+        budget = 100000; % A fixed budget, since the budget of a bidder doesn't really affect ebay auctions
+        % incrementFactor = rand(1) * 0.05; % Generate random increment factor for strategy
+        strategySimpleIncrement = SimpleIncrementStrategy; % Initialize bidding strategy
+        snipingTiming = 5;
+        strategySniping = SnipingStrategy(snipingTiming);
+        if i <= 3 % if i <= 1, then there would be no other agents compete with it in first rounds
+            arrBidders(i) = Bidder(i, budget, initialMaxBids, strategySimpleIncrement); % Initialize Bidder object
+        else
+            arrBidders(i) = Bidder(i, budget, initialMaxBids, strategySniping); % Initialize Bidder object
+        end
     end
 end
 
-function initialMaxBids = initializeMaxBids(numOfAuctionLot)
+function initialMaxBids = initializeMaxBids(numOfAuctionLot, arrAuctionLots)
     % Initializes the max bids for each auction lot for a bidder
     initialMaxBids = containers.Map('KeyType', 'double', 'ValueType', 'double');
-    for j = 1:numOfAuctionLot
-        lotID = j;
-        maxBid = rand(1) * 10000 + 1000; % Generate random max bid for this lot
+    for i = 1:numOfAuctionLot
+        lotID = i;
+        actualValue = arrAuctionLots(lotID).getActualValue();
+        maxBid = normrnd(actualValue, actualValue/5); 
+        % Generate a random value around stock price of the lot, with normal distribution
         initialMaxBids(lotID) = maxBid;
     end
 end
