@@ -2,13 +2,14 @@ function Main
 % Main function to initialize and run the auction simulation
 
     % Initialization of simulation parameters
-    numOfBidders = 30;
-    numOfAuctionLot = 2; % Assuming one auction lot for simplicity, but the structure allows for more
-    minIncrementFactor = 0.01;
-    maxRounds = 40;
+    numOfBidders = 15;
+    numOfAuctionLot = 1;
+    % Assuming one auction lot for simplicity, but the structure allows for more
+    % minIncrementFactor = 0.01;
+    maxRounds = 360;
 
     % Initializing AuctionLots
-    arrAuctionLots = initializeAuctionLots(numOfAuctionLot, minIncrementFactor);
+    arrAuctionLots = initializeAuctionLots(numOfAuctionLot);
 
     % Initializing Bidders
     arrBidders = initializeBidders(numOfBidders, numOfAuctionLot, arrAuctionLots);
@@ -18,13 +19,13 @@ function Main
     Auction1.run;
 end
 
-function arrAuctionLots = initializeAuctionLots(numOfAuctionLot, minIncrementFactor)
+function arrAuctionLots = initializeAuctionLots(numOfAuctionLot)
     % Preallocates and initializes auction lots with starting bid and minimum increment
     arrAuctionLots = AuctionLot.empty(numOfAuctionLot, 0);
     for i = 1:numOfAuctionLot
-        startingBid = 200; % Generate random starting bid
-        minIncrement = startingBid * minIncrementFactor; % Calculate minimum increment
-        actualValue = 889.4; % Unit: Dollars
+        startingBid = 0.77 * 800; % A random starting bid
+        minIncrement = ebayMinIncrement(startingBid);
+        actualValue = 800; % Unit: Dollars
         arrAuctionLots(i) = AuctionLot(i, startingBid, minIncrement, actualValue); % Initialize AuctionLot object
     end
 end
@@ -35,12 +36,12 @@ function arrBidders = initializeBidders(numOfBidders, numOfAuctionLot, arrAuctio
     for i = 1:numOfBidders
         initialMaxBids = initializeMaxBids(numOfAuctionLot, arrAuctionLots);
         budget = 100000; % A fixed budget, since the budget of a bidder doesn't really affect ebay auctions
-        % incrementFactor = rand(1) * 0.05; % Generate random increment factor for strategy
         strategySimpleIncrement = SimpleIncrementStrategy; % Initialize bidding strategy
-        avgSnipingTiming = 10;
-        snipingTiming = 10 - leftHalfNormalDis(avgSnipingTiming, avgSnipingTiming/10); %重写
+        avgSnipingTiming = 50;
+        snipingTiming = 50 - leftHalfNormalDis(avgSnipingTiming, avgSnipingTiming/2); % 
         strategySniping = SnipingStrategy(snipingTiming);
-        if i <= 3 % if i <= 1, then there would be no other agents compete with it in first rounds
+        if i <= 2 % if i <= 1, then there would be no other agents compete with it in first rounds
+            %可能是同一个bidder在使用不同的strategy
             arrBidders(i) = Bidder(i, budget, initialMaxBids, strategySimpleIncrement); % Initialize Bidder object
         else
             arrBidders(i) = Bidder(i, budget, initialMaxBids, strategySniping); % Initialize Bidder object
@@ -67,4 +68,28 @@ function r = leftHalfNormalDis(mu, sigma)
         end
     end
 end
-
+function minIncrement = ebayMinIncrement(biddingPrice)
+    if biddingPrice >= 0.01 && biddingPrice <= 0.99
+        minIncrement = 0.05;
+    elseif biddingPrice >= 1.00 && biddingPrice <= 4.99
+        minIncrement = 0.25;
+    elseif biddingPrice >= 5.00 && biddingPrice <= 24.99
+        minIncrement = 0.50;
+    elseif biddingPrice >= 25.00 && biddingPrice <= 99.99
+        minIncrement = 1.00;
+    elseif biddingPrice >= 100.00 && biddingPrice <= 249.99
+        minIncrement = 2.50;
+    elseif biddingPrice >= 250.00 && biddingPrice <= 499.99
+        minIncrement = 5.00;
+    elseif biddingPrice >= 500.00 && biddingPrice <= 999.99
+        minIncrement = 10.00;
+    elseif biddingPrice >= 1000.00 && biddingPrice <= 2499.99
+        minIncrement = 25.00;
+    elseif biddingPrice >= 2500.00 && biddingPrice <= 4999.99
+        minIncrement = 50.00;
+    elseif biddingPrice >= 5000.00
+        minIncrement = 100.00;
+    else
+        error('Invalid bidding price');
+    end
+end

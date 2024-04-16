@@ -37,6 +37,9 @@ classdef AuctionSimulator
         
                 % Update the plot with the new bid information for visualization
                 obj.updatePlot(lotIndex, round, bidsOverRounds);
+
+                % Update the minIncrement of auction lot
+                obj.auctionLots(lotIndex).setMinIncrement(obj.ebayMinIncrement(highestBid));
             end
     
             % After all rounds have been processed for this lot,
@@ -76,10 +79,10 @@ classdef AuctionSimulator
         
         % Announce winners and maximum bidders after the final round
         function announceWinners(obj, lotIndex)
-        winnerID = obj.auctionLots(lotIndex).getLeadingBidder;
-        lotID = obj.auctionLots(lotIndex).getID;
-        largestMaxBidID = -1;
-        largestMaxBid = -1;
+            winnerID = obj.auctionLots(lotIndex).getLeadingBidder;
+            lotID = obj.auctionLots(lotIndex).getID;
+            largestMaxBidID = -1;
+            largestMaxBid = -1;
 
             % Find the bidder with the largest max bid for this lot
             for bidderIndex = 1:length(obj.bidders)
@@ -103,6 +106,32 @@ classdef AuctionSimulator
                 obj.bidders(winnerID).setBudget(winnerBudget);
             else
                 fprintf('Failed to sell at this auction lot, lot ID: %d\n', lotID);
+            end
+        end
+        % function for calculating ebay auction minimum incremnet
+        function minIncrement = ebayMinIncrement(obj, biddingPrice)
+            if biddingPrice >= 0.01 && biddingPrice <= 0.99
+                minIncrement = 0.05;
+            elseif biddingPrice >= 1.00 && biddingPrice <= 4.99
+                minIncrement = 0.25;
+            elseif biddingPrice >= 5.00 && biddingPrice <= 24.99
+                minIncrement = 0.50;
+            elseif biddingPrice >= 25.00 && biddingPrice <= 99.99
+                minIncrement = 1.00;
+            elseif biddingPrice >= 100.00 && biddingPrice <= 249.99
+                minIncrement = 2.50;
+            elseif biddingPrice >= 250.00 && biddingPrice <= 499.99
+                minIncrement = 5.00;
+            elseif biddingPrice >= 500.00 && biddingPrice <= 999.99
+                minIncrement = 10.00;
+            elseif biddingPrice >= 1000.00 && biddingPrice <= 2499.99
+                minIncrement = 25.00;
+            elseif biddingPrice >= 2500.00 && biddingPrice <= 4999.99
+                minIncrement = 50.00;
+            elseif biddingPrice >= 5000.00
+                minIncrement = 100.00;
+            else
+                error('Invalid bidding price');
             end
         end
     end
