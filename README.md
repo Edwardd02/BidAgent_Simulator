@@ -6,3 +6,4 @@ Problems Attempt to solve:
 4. Optimal Reserve Price Setting: For the auctioneer, what is the  optimal reserve price (the minimum acceptable price) that maximizes  revenue without deterring competitive bidding?
 
 This project aims to establish a simplified model using MATLAB to simulate bidder behavior in various auctions, utilizing Object-Oriented Programming.
+References: https://www.ebay.com/help/buying/bidding/automatic-bidding?id=4014
