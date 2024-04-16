@@ -44,25 +44,30 @@ classdef AuctionSimulator
     
             % After all rounds have been processed for this lot,
             % call announceWinners to display the winner and their bid
-            obj.announceWinners(lotIndex);
+            % obj.announceWinners(lotIndex);
         end
 
         
         function highestBid = processRound(obj, lotIndex, round)
             highestBid = obj.auctionLots(lotIndex).getCurrentBid(); % Initialize with the current highest bid for the lot
-            for bidderIndex = 1:length(obj.bidders)
+            leadingBidderIndex = obj.auctionLots(lotIndex).getLeadingBidder();
+            isUpdated = 0;
+           for bidderIndex = 1:length(obj.bidders) %随机取一个拍卖员
+                
             % Simulate bid by each bidder
                 currentBid = obj.bidders(bidderIndex).placeBid(obj.auctionLots(lotIndex), round, obj.maxRounds).getCurrentBid;
-                if bidderIndex == 1
-                    disp(num2str(currentBid));
-                end
                 % Check if the current bid is higher than the highest bid so far
                 if currentBid > highestBid
+                    isUpdated = 1;
                     highestBid = currentBid; % Update highest bid
-                    obj.auctionLots(lotIndex).setCurrentBid(highestBid); % Update the lot's current highest bid
-                    obj.auctionLots(lotIndex).setLeadingBidder(obj.bidders(bidderIndex).getID); % Update leading bidder
+                    leadingBidderIndex = bidderIndex; % Update leading bidder
                 end
-            end
+           end
+           if isUpdated
+                obj.auctionLots(lotIndex).setCurrentBid(highestBid); % Update the lot's current highest bid
+                obj.auctionLots(lotIndex).setLeadingBidder(obj.bidders(leadingBidderIndex).getID) % Update the leading bidder to lot
+                isUpdated = 0;
+           end
         end
 
         

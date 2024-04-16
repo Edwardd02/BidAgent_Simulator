@@ -6,7 +6,7 @@ function Main
     numOfAuctionLot = 1;
     % Assuming one auction lot for simplicity, but the structure allows for more
     % minIncrementFactor = 0.01;
-    maxRounds = 360;
+    maxRounds = 300;
 
     % Initializing AuctionLots
     arrAuctionLots = initializeAuctionLots(numOfAuctionLot);
@@ -23,9 +23,9 @@ function arrAuctionLots = initializeAuctionLots(numOfAuctionLot)
     % Preallocates and initializes auction lots with starting bid and minimum increment
     arrAuctionLots = AuctionLot.empty(numOfAuctionLot, 0);
     for i = 1:numOfAuctionLot
-        startingBid = 0.77 * 800; % A random starting bid
+        startingBid = 0.35 * 889.4; % A random starting bid
         minIncrement = ebayMinIncrement(startingBid);
-        actualValue = 800; % Unit: Dollars
+        actualValue = 889.4; % Unit: Dollars
         arrAuctionLots(i) = AuctionLot(i, startingBid, minIncrement, actualValue); % Initialize AuctionLot object
     end
 end
@@ -37,8 +37,8 @@ function arrBidders = initializeBidders(numOfBidders, numOfAuctionLot, arrAuctio
         initialMaxBids = initializeMaxBids(numOfAuctionLot, arrAuctionLots);
         budget = 100000; % A fixed budget, since the budget of a bidder doesn't really affect ebay auctions
         strategySimpleIncrement = SimpleIncrementStrategy; % Initialize bidding strategy
-        avgSnipingTiming = 50;
-        snipingTiming = 50 - leftHalfNormalDis(avgSnipingTiming, avgSnipingTiming/2); % 
+        avgSnipingTiming = 40;
+        snipingTiming = 40 - leftHalfNormalDis(avgSnipingTiming, avgSnipingTiming/3); % 
         strategySniping = SnipingStrategy(snipingTiming);
         if i <= 2 % if i <= 1, then there would be no other agents compete with it in first rounds
             %可能是同一个bidder在使用不同的strategy

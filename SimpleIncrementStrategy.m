@@ -6,12 +6,14 @@ classdef SimpleIncrementStrategy < BiddingStrategy
         function obj = SimpleIncrementStrategy()
 
         end
-        function bid = generateBid(obj, currentBid, maxBid, budget, minIncrement, roundsToLast) % Unused arguments: budget
+        function bid = generateBid(obj, currentBid, maxBid, budget, minIncrement, roundsToLast)
             proposedBid = currentBid;
             % distribute probablity for increment
             probIncrement = rand(1);
-            if probIncrement<=0.5
+            if probIncrement<0.6
                 increment = minIncrement;
+            elseif probIncrement<0.9
+                increment = round(currentBid + minIncrement) - currentBid;
             else
                 increment = obj.rightHalfNormalDis(minIncrement, minIncrement/10);
             end
