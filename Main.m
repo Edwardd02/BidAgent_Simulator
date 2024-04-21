@@ -37,8 +37,8 @@ function arrBidders = initializeBidders(numOfBidders, numOfAuctionLot, arrAuctio
         initialMaxBids = initializeMaxBids(numOfAuctionLot, arrAuctionLots);
         budget = 100000; % A fixed budget, since the budget of a bidder doesn't really affect ebay auctions
         strategySimpleIncrement = SimpleIncrementStrategy; % Initialize bidding strategy
-        avgSnipingTiming = 40;
-        snipingTiming = 40 - leftHalfNormalDis(avgSnipingTiming, avgSnipingTiming/3); % 
+        avgSnipingTiming = 25;
+        snipingTiming = 25 - leftHalfNormalDis(avgSnipingTiming, avgSnipingTiming/3); % 
         strategySniping = SnipingStrategy(snipingTiming);
         if i <= 2 % if i <= 1, then there would be no other agents compete with it in first rounds
             %可能是同一个bidder在使用不同的strategy

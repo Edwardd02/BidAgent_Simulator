@@ -17,7 +17,7 @@ classdef SimpleIncrementStrategy < BiddingStrategy
             else
                 increment = obj.rightHalfNormalDis(minIncrement, minIncrement/10);
             end
-            if rand(1)>0.95
+            if rand(1)>0.90
                 proposedBid = currentBid + increment;
             end
             bid = min([proposedBid, maxBid]);
