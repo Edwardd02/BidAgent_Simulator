@@ -1,5 +1,5 @@
 classdef SnipingStrategy < BiddingStrategy
-    properties
+    properties(Access = private)
         snipeTiming = 5;  % How close to the end of the auction to place the bid
         alpha = 200; % Controls the aggressiveness of the exponential increase
     end

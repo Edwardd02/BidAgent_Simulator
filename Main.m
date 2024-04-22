@@ -3,7 +3,7 @@ function Main
 
     % Initialization of simulation parameters
     numOfBidders = 15;
-    numOfAuctionLot = 1;
+    numOfAuctionLot = 2;
     % Assuming one auction lot for simplicity, but the structure allows for more
     % minIncrementFactor = 0.01;
     maxRounds = 300;
@@ -17,6 +17,7 @@ function Main
     % Creating and running the auction simulation
     Auction1 = AuctionSimulator(arrAuctionLots, arrBidders, maxRounds);
     Auction1.run;
+    Auction1.gpFusionAndPlot;
 end
 
 function arrAuctionLots = initializeAuctionLots(numOfAuctionLot)
@@ -36,9 +37,10 @@ function arrBidders = initializeBidders(numOfBidders, numOfAuctionLot, arrAuctio
     for i = 1:numOfBidders
         initialMaxBids = initializeMaxBids(numOfAuctionLot, arrAuctionLots);
         budget = 100000; % A fixed budget, since the budget of a bidder doesn't really affect ebay auctions
-        strategySimpleIncrement = SimpleIncrementStrategy; % Initialize bidding strategy
-        avgSnipingTiming = 25;
-        snipingTiming = 25 - leftHalfNormalDis(avgSnipingTiming, avgSnipingTiming/3); % 
+        simpleSnipingTiming = 100;
+        strategySimpleIncrement = SimpleIncrementStrategy(simpleSnipingTiming); % Initialize bidding strategy
+        maxSnipingTiming = 25;
+        snipingTiming = 25 - leftHalfNormalDis(maxSnipingTiming, maxSnipingTiming/3); % 
         strategySniping = SnipingStrategy(snipingTiming);
         if i <= 2 % if i <= 1, then there would be no other agents compete with it in first rounds
             %可能是同一个bidder在使用不同的strategy

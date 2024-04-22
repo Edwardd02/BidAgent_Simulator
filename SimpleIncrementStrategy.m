@@ -1,10 +1,11 @@
 classdef SimpleIncrementStrategy < BiddingStrategy
-    properties
+    properties(Access = private)
+        snipeTiming;
     end
     
     methods
-        function obj = SimpleIncrementStrategy()
-
+        function obj = SimpleIncrementStrategy(snipeTiming)
+            obj.snipeTiming = snipeTiming;
         end
         function bid = generateBid(obj, currentBid, maxBid, budget, minIncrement, roundsToLast)
             proposedBid = currentBid;
@@ -17,7 +18,8 @@ classdef SimpleIncrementStrategy < BiddingStrategy
             else
                 increment = obj.rightHalfNormalDis(minIncrement, minIncrement/10);
             end
-            if rand(1)>0.90
+            isBidding = rand(1) + max(0, 0.01*(obj.snipeTiming-roundsToLast));
+            if isBidding>0.90
                 proposedBid = currentBid + increment;
             end
             bid = min([proposedBid, maxBid]);

@@ -3,6 +3,8 @@ classdef AuctionSimulator
         auctionLots   % Array of Product objects
         bidders       % Array of Bidder objects
         maxRounds     % Maximum number of bidding rounds
+        gpModel       % Gaussian Process Model
+        bidsHistory   % Cell array to store the history of bids for each auction lot
     end
     
     methods
@@ -11,6 +13,11 @@ classdef AuctionSimulator
             obj.auctionLots = auctionLots;
             obj.bidders = bidders;
             obj.maxRounds = maxRounds;
+            obj.gpModel = [];  % Initialize GP model as empty
+            obj.bidsHistory = cell(numel(auctionLots), 1); % Initialize bids history
+            for i = 1:numel(auctionLots)
+                obj.bidsHistory{i} = []; % Initialize empty array for each auction lot
+            end
         end
         
         % Method to run the simulation
@@ -19,7 +26,41 @@ classdef AuctionSimulator
             for lotIndex = 1:length(obj.auctionLots)
                 bidsOverRounds = zeros(1, obj.maxRounds); % Track bids for each round
                 obj.processBiddingForLot(lotIndex, bidsOverRounds);
+
+                % After processing each lot, store the bids in the history
+                obj.bidsHistory{lotIndex} = bidsOverRounds;
             end
+        end
+        % Model-Based Fusion: Fit a model (Gaussian Process Regression)
+        % to the bid data of each lot, then use the models to generate a
+        % fused curve at each round.
+        function gpFusionAndPlot(obj)
+            numLots = numel(obj.auctionLots);
+            allPredictions = [];
+            for i = 1:numLots
+                % Extract the bid data for the current lot
+                bidData = obj.bidsHistory{i};
+                rounds = (1:numel(bidData))';
+            
+                % Fit GP model
+                gpModel = fitrgp(rounds, bidData, 'KernelFunction', 'squaredexponential', 'Standardize', 1);
+            
+                % Predict bids for each round using the GP model
+                [predictions, ~] = predict(gpModel, rounds);
+            
+                % Store predictions
+                allPredictions = [allPredictions, predictions];
+            end
+        
+            % Calculate the fused prediction (mean across all lots)
+            fusedPrediction = mean(allPredictions, 2);
+        
+            % Plot the fused curve
+            figure;
+            plot(rounds, fusedPrediction, '-o', 'LineWidth', 2);
+            title('Fused GP Prediction Curve');
+            xlabel('Round');
+            ylabel('Bid Amount');
         end
     end
     
@@ -36,7 +77,7 @@ classdef AuctionSimulator
                 bidsOverRounds(round) = highestBid;
         
                 % Update the plot with the new bid information for visualization
-                obj.updatePlot(lotIndex, round, bidsOverRounds);
+                % obj.updatePlot(lotIndex, round, bidsOverRounds);
 
                 % Update the minIncrement of auction lot
                 obj.auctionLots(lotIndex).setMinIncrement(obj.ebayMinIncrement(highestBid));
@@ -52,7 +93,7 @@ classdef AuctionSimulator
             highestBid = obj.auctionLots(lotIndex).getCurrentBid(); % Initialize with the current highest bid for the lot
             leadingBidderIndex = obj.auctionLots(lotIndex).getLeadingBidder();
             isUpdated = 0;
-           for bidderIndex = 1:length(obj.bidders) %随机取一个拍卖员
+           for bidderIndex = 1:length(obj.bidders)
                 
             % Simulate bid by each bidder
                 currentBid = obj.bidders(bidderIndex).placeBid(obj.auctionLots(lotIndex), round, obj.maxRounds).getCurrentBid;
@@ -113,6 +154,8 @@ classdef AuctionSimulator
                 fprintf('Failed to sell at this auction lot, lot ID: %d\n', lotID);
             end
         end
+        
+
         % function for calculating ebay auction minimum incremnet
         function minIncrement = ebayMinIncrement(obj, biddingPrice)
             if biddingPrice >= 0.01 && biddingPrice <= 0.99
