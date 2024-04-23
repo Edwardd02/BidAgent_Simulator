@@ -7,3 +7,4 @@ Problems Attempt to solve:
 
 This project aims to establish a simplified model using MATLAB to simulate bidder behavior in various auctions, utilizing Object-Oriented Programming.
 References: https://www.ebay.com/help/buying/bidding/automatic-bidding?id=4014
+https://www.jstor.org/stable/pdf/3083298.pdf?refreqid=fastly-default%3A1020d6db6d43fa0ee699c717169dda9d&ab_segments=&origin=&initiator=&acceptTC=1
