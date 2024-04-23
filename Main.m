@@ -3,13 +3,13 @@ function Main
 
     % Initialization of simulation parameters
     numOfBidders = 15;
-    numOfAuctionLot = 2;
-    % Assuming one auction lot for simplicity, but the structure allows for more
-    % minIncrementFactor = 0.01;
-    maxRounds = 300;
+    numOfAuctionLot = 500;
+    maxRounds = 250;
+    basePrice = 870;
+    startingRate = 0.35;
 
     % Initializing AuctionLots
-    arrAuctionLots = initializeAuctionLots(numOfAuctionLot);
+    arrAuctionLots = initializeAuctionLots(numOfAuctionLot, basePrice, startingRate);
 
     % Initializing Bidders
     arrBidders = initializeBidders(numOfBidders, numOfAuctionLot, arrAuctionLots);
@@ -17,19 +17,23 @@ function Main
     % Creating and running the auction simulation
     Auction1 = AuctionSimulator(arrAuctionLots, arrBidders, maxRounds);
     Auction1.run;
-    Auction1.gpFusionAndPlot;
 end
-
-function arrAuctionLots = initializeAuctionLots(numOfAuctionLot)
+% Function for initialization of AuctionLots
+% basePrice: Base price used to calculate the starting bid
+% multiplier: Multiplier applied to basePrice to set the starting bid
+function arrAuctionLots = initializeAuctionLots(numOfAuctionLot, basePrice, startingRate)
     % Preallocates and initializes auction lots with starting bid and minimum increment
+
     arrAuctionLots = AuctionLot.empty(numOfAuctionLot, 0);
     for i = 1:numOfAuctionLot
-        startingBid = 0.35 * 889.4; % A random starting bid
-        minIncrement = ebayMinIncrement(startingBid);
-        actualValue = 889.4; % Unit: Dollars
+        randBasePrice = normrnd(basePrice, basePrice/20);
+        startingBid = startingRate * randBasePrice; % Calculate starting bid based on base price and startingRate
+        minIncrement = ebayMinIncrement(startingBid); % Calculate minimum increment based on starting bid
+        actualValue = randBasePrice; % Set the actual value of the lot to the base price
         arrAuctionLots(i) = AuctionLot(i, startingBid, minIncrement, actualValue); % Initialize AuctionLot object
     end
 end
+
 
 function arrBidders = initializeBidders(numOfBidders, numOfAuctionLot, arrAuctionLots)
     % Preallocates and initializes bidders with their budget, max bids, and strategy
@@ -37,13 +41,12 @@ function arrBidders = initializeBidders(numOfBidders, numOfAuctionLot, arrAuctio
     for i = 1:numOfBidders
         initialMaxBids = initializeMaxBids(numOfAuctionLot, arrAuctionLots);
         budget = 100000; % A fixed budget, since the budget of a bidder doesn't really affect ebay auctions
-        simpleSnipingTiming = 100;
+        simpleSnipingTiming = 70;
         strategySimpleIncrement = SimpleIncrementStrategy(simpleSnipingTiming); % Initialize bidding strategy
-        maxSnipingTiming = 25;
-        snipingTiming = 25 - leftHalfNormalDis(maxSnipingTiming, maxSnipingTiming/3); % 
+        maxSnipingTiming = 20;
+        snipingTiming = maxSnipingTiming - leftHalfNormalDis(maxSnipingTiming, maxSnipingTiming/3); % 
         strategySniping = SnipingStrategy(snipingTiming);
         if i <= 2 % if i <= 1, then there would be no other agents compete with it in first rounds
-            %可能是同一个bidder在使用不同的strategy
             arrBidders(i) = Bidder(i, budget, initialMaxBids, strategySimpleIncrement); % Initialize Bidder object
         else
             arrBidders(i) = Bidder(i, budget, initialMaxBids, strategySniping); % Initialize Bidder object

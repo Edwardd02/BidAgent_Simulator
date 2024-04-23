@@ -1,5 +1,5 @@
 classdef AuctionSimulator
-    properties (Access = private)
+    properties
         auctionLots   % Array of Product objects
         bidders       % Array of Bidder objects
         maxRounds     % Maximum number of bidding rounds
@@ -23,13 +23,17 @@ classdef AuctionSimulator
         % Method to run the simulation
         function run(obj)
             figure; % Initialize figure for visualization
-            for lotIndex = 1:length(obj.auctionLots)
+            numLots = numel(obj.auctionLots);
+            for lotIndex = 1:numLots
+                ProcessingDisp = ['Simluating Bidding: Now at lot: ' , num2str(lotIndex), ', ', num2str(numLots-lotIndex), ' lots left'];
+                disp(ProcessingDisp);
                 bidsOverRounds = zeros(1, obj.maxRounds); % Track bids for each round
-                obj.processBiddingForLot(lotIndex, bidsOverRounds);
-
+                bidsOverRounds = obj.processBiddingForLot(lotIndex, bidsOverRounds);
                 % After processing each lot, store the bids in the history
                 obj.bidsHistory{lotIndex} = bidsOverRounds;
             end
+            % Gaussian Process
+            obj.gpFusionAndPlot;
         end
         % Model-Based Fusion: Fit a model (Gaussian Process Regression)
         % to the bid data of each lot, then use the models to generate a
@@ -38,18 +42,32 @@ classdef AuctionSimulator
             numLots = numel(obj.auctionLots);
             allPredictions = [];
             for i = 1:numLots
+                ProcessingDisp = ['Curve Fusion: Now at lot: ' , num2str(i), ', ', num2str(numLots - i), ' lots left'];
+                disp(ProcessingDisp);
                 % Extract the bid data for the current lot
                 bidData = obj.bidsHistory{i};
+                % Transpose if bidData is a row vector
+                if size(bidData, 1) == 1  
+                    bidData = bidData';
+                end
                 rounds = (1:numel(bidData))';
-            
-                % Fit GP model
-                gpModel = fitrgp(rounds, bidData, 'KernelFunction', 'squaredexponential', 'Standardize', 1);
-            
-                % Predict bids for each round using the GP model
-                [predictions, ~] = predict(gpModel, rounds);
-            
-                % Store predictions
-                allPredictions = [allPredictions, predictions];
+                % Ensure rounds is a column vector
+                if size(rounds, 1) == 1
+                    rounds = rounds';
+                end
+                try
+                    obj.gpModel = fitrgp(rounds, bidData, 'KernelFunction', 'squaredexponential', 'Standardize', true);
+        
+                    % Predict bids for each round using the GP model
+                    [predictions, ~] = predict(obj.gpModel, rounds);
+        
+                    % Store predictions
+                    allPredictions = [allPredictions, predictions];
+                catch ME
+                    disp('Error fitting GP Model:');
+                    disp(ME.message);
+                    continue;
+                end
             end
         
             % Calculate the fused prediction (mean across all lots)
@@ -66,7 +84,7 @@ classdef AuctionSimulator
     
     methods (Access = private)
         % Helper method to process bidding for a single auction lot
-        function processBiddingForLot(obj, lotIndex, bidsOverRounds)
+        function bidsOverRounds = processBiddingForLot(obj, lotIndex, bidsOverRounds)
             % Loop through each bidding round up to the maximum rounds set for the auction
             for round = 1:obj.maxRounds
                 % Call processRound method to handle the bidding for this round and lot,
@@ -75,8 +93,10 @@ classdef AuctionSimulator
         
                 % Store the highest bid of the current round in the bidsOverRounds array
                 bidsOverRounds(round) = highestBid;
+                
         
                 % Update the plot with the new bid information for visualization
+                % Plotting Function
                 % obj.updatePlot(lotIndex, round, bidsOverRounds);
 
                 % Update the minIncrement of auction lot
@@ -94,7 +114,6 @@ classdef AuctionSimulator
             leadingBidderIndex = obj.auctionLots(lotIndex).getLeadingBidder();
             isUpdated = 0;
            for bidderIndex = 1:length(obj.bidders)
-                
             % Simulate bid by each bidder
                 currentBid = obj.bidders(bidderIndex).placeBid(obj.auctionLots(lotIndex), round, obj.maxRounds).getCurrentBid;
                 % Check if the current bid is higher than the highest bid so far
@@ -106,7 +125,7 @@ classdef AuctionSimulator
            end
            if isUpdated
                 obj.auctionLots(lotIndex).setCurrentBid(highestBid); % Update the lot's current highest bid
-                obj.auctionLots(lotIndex).setLeadingBidder(obj.bidders(leadingBidderIndex).getID) % Update the leading bidder to lot
+                obj.auctionLots(lotIndex).setLeadingBidder(obj.bidders(leadingBidderIndex).getID); % Update the leading bidder to lot
                 isUpdated = 0;
            end
         end
