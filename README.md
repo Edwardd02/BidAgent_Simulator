@@ -1,5 +1,5 @@
-# MATH-2121-Spring-2024-Project 
-Online Auction Simulation Program
+# Online Auction Simulation Program
+MATH-2121-Spring-2024-Project 
 
 ## Overview
 This MATLAB program simulates an auction system where multiple bidders participate in bidding for a set number of auction lots. It utilizes object-oriented programming to model auction dynamics, applying various bidding strategies and calculating bid increments based on predefined rules.
