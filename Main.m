@@ -5,7 +5,7 @@ function Main
     numOfBidders = 15;
     numOfAuctionLot = 500;
     maxRounds = 250;
-    basePrice = 870;
+    basePrice = 890;
     startingRate = 0.35;
 
     % Initializing AuctionLots
@@ -44,7 +44,7 @@ function arrBidders = initializeBidders(numOfBidders, numOfAuctionLot, arrAuctio
         simpleSnipingTiming = 70;
         strategySimpleIncrement = SimpleIncrementStrategy(simpleSnipingTiming); % Initialize bidding strategy
         maxSnipingTiming = 20;
-        snipingTiming = maxSnipingTiming - leftHalfNormalDis(maxSnipingTiming, maxSnipingTiming/3); % 
+        snipingTiming = maxSnipingTiming - leftHalfNormalDis(maxSnipingTiming, maxSnipingTiming/10); % 
         strategySniping = SnipingStrategy(snipingTiming);
         if i <= 2 % if i <= 1, then there would be no other agents compete with it in first rounds
             arrBidders(i) = Bidder(i, budget, initialMaxBids, strategySimpleIncrement); % Initialize Bidder object
