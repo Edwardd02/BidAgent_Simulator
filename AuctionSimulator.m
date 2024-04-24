@@ -51,23 +51,15 @@ classdef AuctionSimulator
                     bidData = bidData';
                 end
                 rounds = (1:numel(bidData))';
-                % Ensure rounds is a column vector
-                if size(rounds, 1) == 1
-                    rounds = rounds';
-                end
-                try
-                    obj.gpModel = fitrgp(rounds, bidData, 'KernelFunction', 'squaredexponential', 'Standardize', true);
+                
+                obj.gpModel = fitrgp(rounds, bidData, 'KernelFunction', 'squaredexponential', 'Standardize', true);
         
-                    % Predict bids for each round using the GP model
-                    [predictions, ~] = predict(obj.gpModel, rounds);
+                % Predict bids for each round using the GP model
+                [predictions, ~] = predict(obj.gpModel, rounds);
         
-                    % Store predictions
-                    allPredictions = [allPredictions, predictions];
-                catch ME
-                    disp('Error fitting GP Model:');
-                    disp(ME.message);
-                    continue;
-                end
+                % Store predictions
+                allPredictions = [allPredictions, predictions];
+
             end
         
             % Calculate the fused prediction (mean across all lots)
