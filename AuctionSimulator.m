@@ -46,12 +46,13 @@ classdef AuctionSimulator
                 disp(ProcessingDisp);
                 % Extract the bid data for the current lot
                 bidData = obj.bidsHistory{i};
+                bidData = bidData./890;
                 % Transpose if bidData is a row vector
                 if size(bidData, 1) == 1  
                     bidData = bidData';
                 end
                 rounds = (1:numel(bidData))';
-                
+                rounds = rounds./250.*60;
                 obj.gpModel = fitrgp(rounds, bidData, 'KernelFunction', 'squaredexponential', 'Standardize', true);
         
                 % Predict bids for each round using the GP model

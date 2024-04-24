@@ -3,7 +3,7 @@ function Main
 
     % Initialization of simulation parameters
     numOfBidders = 15;
-    numOfAuctionLot = 500;
+    numOfAuctionLot = 1000;
     maxRounds = 250;
     basePrice = 890;
     startingRate = 0.35;
@@ -46,7 +46,8 @@ function arrBidders = initializeBidders(numOfBidders, numOfAuctionLot, arrAuctio
         maxSnipingTiming = 20;
         snipingTiming = maxSnipingTiming - leftHalfNormalDis(maxSnipingTiming, maxSnipingTiming/10); % 
         strategySniping = SnipingStrategy(snipingTiming);
-        if i <= 2 % if i <= 1, then there would be no other agents compete with it in first rounds
+        ratioOfStrategy = 2/15;
+        if i <= ratioOfStrategy * numOfBidders
             arrBidders(i) = Bidder(i, budget, initialMaxBids, strategySimpleIncrement); % Initialize Bidder object
         else
             arrBidders(i) = Bidder(i, budget, initialMaxBids, strategySniping); % Initialize Bidder object
